@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Timing App</title>
+<style>
+body {
+  font-family: Arial;
+  background: #111;
+  color: white;
+  text-align: center;
+}
+button {
+  margin: 5px;
+  padding: 15px;
+  font-size: 16px;
+  border-radius: 10px;
+  border: none;
+  background: #007bff;
+  color: white;
+}
+button:disabled {
+  background: gray;
+}
+.box {
+  margin-top: 20px;
+}
+</style>
+</head>
+<body>
+
+<h2>Timing App</h2>
+
+<div class="box">
+<button onclick="setTime('call')" id="call">Start Call</button>
+<button onclick="setTime('bed')" id="bed" disabled>Bed Available</button>
+<button onclick="setTime('confirm')" id="confirm" disabled>Confirmed</button>
+<button onclick="setTime('endorse')" id="endorse" disabled>Endorsement</button>
+<button onclick="setTime('end')" id="end" disabled>Call End</button>
+<button onclick="setTime('mod')" id="mod" disabled>MOD Activated</button>
+</div>
+
+<div id="output"></div>
+
+<script>
+let times = {};
+
+function getTime() {
+  let d = new Date();
+  return d.getHours() + ":" + d.getMinutes();
+}
+
+function setTime(step) {
+  times[step] = getTime();
+  document.getElementById(step).disabled = true;
+
+  if(step === 'call') document.getElementById('bed').disabled = false;
+  if(step === 'bed') document.getElementById('confirm').disabled = false;
+  if(step === 'confirm') document.getElementById('endorse').disabled = false;
+  if(step === 'endorse') document.getElementById('end').disabled = false;
+  if(step === 'end') document.getElementById('mod').disabled = false;
+
+  render();
+}
+
+function render() {
+  let text = "";
+  for (let key in times) {
+    text += key + ": " + times[key] + "<br>";
+  }
+  document.getElementById("output").innerHTML = text;
+}
+</script>
+
+</body>
+</html>
