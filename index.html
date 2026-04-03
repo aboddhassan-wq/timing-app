@@ -1,76 +1,208 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>Timing App</title>
-<style>
-body {
-  font-family: Arial;
-  background: #111;
-  color: white;
-  text-align: center;
-}
-button {
-  margin: 5px;
-  padding: 15px;
-  font-size: 16px;
-  border-radius: 10px;
-  border: none;
-  background: #007bff;
-  color: white;
-}
-button:disabled {
-  background: gray;
-}
-.box {
-  margin-top: 20px;
-}
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Timing App</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #111;
+      color: white;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 500px;
+      margin: 0 auto;
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 20px;
+      font-size: 28px;
+    }
+
+    .actions {
+      margin-bottom: 20px;
+    }
+
+    .reset-btn {
+      width: 100%;
+      padding: 14px;
+      font-size: 17px;
+      border: none;
+      border-radius: 12px;
+      background: #dc3545;
+      color: white;
+      cursor: pointer;
+    }
+
+    .reset-btn:hover {
+      opacity: 0.95;
+    }
+
+    .buttons {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .step-btn {
+      width: 100%;
+      padding: 18px;
+      font-size: 18px;
+      border: none;
+      border-radius: 14px;
+      background: #007bff;
+      color: white;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    .step-btn:disabled {
+      background: #555;
+      cursor: not-allowed;
+      opacity: 0.8;
+    }
+
+    .results {
+      margin-top: 25px;
+      background: #1b1b1b;
+      border-radius: 14px;
+      padding: 15px;
+    }
+
+    .results h2 {
+      margin-top: 0;
+      font-size: 22px;
+      text-align: center;
+    }
+
+    .result-item {
+      padding: 10px 12px;
+      margin-bottom: 8px;
+      background: #262626;
+      border-radius: 10px;
+      font-size: 17px;
+    }
+
+    .empty {
+      text-align: center;
+      color: #bbb;
+      font-size: 16px;
+      padding: 10px 0;
+    }
+
+    @media (max-width: 480px) {
+      body {
+        padding: 14px;
+      }
+
+      h1 {
+        font-size: 24px;
+      }
+
+      .step-btn,
+      .reset-btn {
+        font-size: 16px;
+        padding: 16px;
+      }
+    }
+  </style>
 </head>
 <body>
+  <div class="container">
+    <h1>Timing App</h1>
 
-<h2>Timing App</h2>
+    <div class="actions">
+      <button class="reset-btn" onclick="resetTimes()">New Case / Reset</button>
+    </div>
 
-<div class="box">
-<button onclick="setTime('call')" id="call">Start Call</button>
-<button onclick="setTime('bed')" id="bed" disabled>Bed Available</button>
-<button onclick="setTime('confirm')" id="confirm" disabled>Confirmed</button>
-<button onclick="setTime('endorse')" id="endorse" disabled>Endorsement</button>
-<button onclick="setTime('end')" id="end" disabled>Call End</button>
-<button onclick="setTime('mod')" id="mod" disabled>MOD Activated</button>
-</div>
+    <div class="buttons">
+      <button class="step-btn" onclick="setTime('Time of Call')" id="call">Time of Call</button>
+      <button class="step-btn" onclick="setTime('Bed Availability')" id="bed" disabled>Bed Availability</button>
+      <button class="step-btn" onclick="setTime('Call Confirmation')" id="confirm" disabled>Call Confirmation</button>
+      <button class="step-btn" onclick="setTime('Medical Endorsement')" id="endorse" disabled>Medical Endorsement</button>
+      <button class="step-btn" onclick="setTime('Time Call End')" id="end" disabled>Time Call End</button>
+      <button class="step-btn" onclick="setTime('MOD Activation')" id="mod" disabled>MOD Activation</button>
+    </div>
 
-<div id="output"></div>
+    <div class="results">
+      <h2>Recorded Times</h2>
+      <div id="output" class="empty">No times recorded yet</div>
+    </div>
+  </div>
 
-<script>
-let times = {};
+  <script>
+    let times = {};
 
-function getTime() {
-  let d = new Date();
-  return d.getHours() + ":" + d.getMinutes();
-}
+    function getCurrentTime() {
+      const now = new Date();
+      const hours = String(now.getHours()).padStart(2, '0');
+      const minutes = String(now.getMinutes()).padStart(2, '0');
+      return `${hours}:${minutes}`;
+    }
 
-function setTime(step) {
-  times[step] = getTime();
-  document.getElementById(step).disabled = true;
+    function setTime(label) {
+      const time = getCurrentTime();
+      times[label] = time;
 
-  if(step === 'call') document.getElementById('bed').disabled = false;
-  if(step === 'bed') document.getElementById('confirm').disabled = false;
-  if(step === 'confirm') document.getElementById('endorse').disabled = false;
-  if(step === 'endorse') document.getElementById('end').disabled = false;
-  if(step === 'end') document.getElementById('mod').disabled = false;
+      if (label === 'Time of Call') {
+        document.getElementById('call').disabled = true;
+        document.getElementById('bed').disabled = false;
+      } else if (label === 'Bed Availability') {
+        document.getElementById('bed').disabled = true;
+        document.getElementById('confirm').disabled = false;
+      } else if (label === 'Call Confirmation') {
+        document.getElementById('confirm').disabled = true;
+        document.getElementById('endorse').disabled = false;
+      } else if (label === 'Medical Endorsement') {
+        document.getElementById('endorse').disabled = true;
+        document.getElementById('end').disabled = false;
+      } else if (label === 'Time Call End') {
+        document.getElementById('end').disabled = true;
+        document.getElementById('mod').disabled = false;
+      } else if (label === 'MOD Activation') {
+        document.getElementById('mod').disabled = true;
+      }
 
-  render();
-}
+      renderTimes();
+    }
 
-function render() {
-  let text = "";
-  for (let key in times) {
-    text += key + ": " + times[key] + "<br>";
-  }
-  document.getElementById("output").innerHTML = text;
-}
-</script>
+    function renderTimes() {
+      const output = document.getElementById('output');
+      const entries = Object.entries(times);
 
+      if (entries.length === 0) {
+        output.className = 'empty';
+        output.innerHTML = 'No times recorded yet';
+        return;
+      }
+
+      output.className = '';
+      output.innerHTML = entries
+        .map(([label, time]) => `<div class="result-item"><strong>${label}:</strong> ${time}</div>`)
+        .join('');
+    }
+
+    function resetTimes() {
+      times = {};
+
+      document.getElementById('call').disabled = false;
+      document.getElementById('bed').disabled = true;
+      document.getElementById('confirm').disabled = true;
+      document.getElementById('endorse').disabled = true;
+      document.getElementById('end').disabled = true;
+      document.getElementById('mod').disabled = true;
+
+      renderTimes();
+    }
+  </script>
 </body>
 </html>
